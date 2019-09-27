@@ -1,0 +1,230 @@
+<!-- We don't need a full layout in this file because this page will be parsed with Ajax.  -->
+<div class="page" data-name="buscar">
+        <!-- <div id="toolbarFiltro" class="toolbar tabbar no-shadow">
+                    <div style="background: #FF94C0" class="toolbar-inner">
+                            <a href="#alumnos" class="tab-link tab-link-active">ALUMNOS</a>
+                            <a href="#materias" class="tab-link">MATERIAS</a>
+                            <a href="#escuelas" class="tab-link">ESCUELAS</a>
+                    </div>
+            </div> -->
+        <div id="searchBarBuscar" class="toolbar tabbar no-shadow">
+                <form class="searchbar">
+                        <div class="searchbar-inner">
+                                <div class="searchbar-input-wrap">
+                                        <input id="buscarCampo" type="search" placeholder="Buscar alumnos">
+                                        <i class="searchbar-icon"></i>
+                                        <span class="input-clear-button"></span>
+                                </div>
+                                <span class="searchbar-disable-button">Cancel</span>
+                        </div>
+                </form>
+        </div>
+        <div style="background: #FF94C0" class="toolbar tabbar tabbar-labels toolbar-bottom-md">
+                <div class="toolbar-inner">
+                        <a href="#agregar" class="tab-link esconderNav">
+                                <i class="f7-icons color-white">checkmark_alt_circle</i>
+                                <span class="tabbar-label">Agregar</span>
+                        </a>
+                        <a href="#buscar" class="tab-link tab-link-active mostrarNav">
+                                <i class="f7-icons">search_circle</i>
+                                <span class="tabbar-label">Buscar</span>
+                        </a>
+                        <a href="#definir" class="tab-link esconderNav">
+                                <i class="f7-icons">asterisk_circle</i>
+                                <span class="tabbar-label">Definir</span>
+                        </a>
+                </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+                <!-- First tab, active -->
+                <div class="page-content tab tab-active" id="buscar">
+
+                        <!-- Searchbar with auto init -->
+                        <div id="toolbarFiltro" class="toolbar tabbar no-shadow">
+                                <div style="background: #FF6090" class="toolbar-inner">
+                                        <a href="#alumnos" name="alumnos" class="tab-link tab-link-active">ALUMNOS</a>
+                                        <a href="#materias" name="materias" class="tab-link">MATERIAS</a>
+                                        <a href="#escuelas" name="escuelas" class="tab-link">ESCUELAS</a>
+                                </div>
+                        </div>
+                        <div class="tabs">
+                                <!-- First tab, active -->
+                                <div class="tab tab-active" id="alumnos">
+                                        <div class="buscarAca list">
+                                                <ul>
+                                                        <li class="swipeout deleted-callback">
+                                                                <div class="swipeout-content">
+                                                                        <div class="item-media">
+                                                                                <i class="icon icon-f7"></i>
+                                                                        </div>
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">Carlos Mandela
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="swipeout-actions-right">
+                                                                        <a dni="16516518"
+                                                                                class="open-more-actions">Modificar</a>
+                                                                        <a dni="16516518"
+                                                                                data-confirm="Are you sure you want to delete this item?"
+                                                                                class="swipeout-delete">Eliminar</a>
+                                                                </div>
+                                                        </li>
+                                                        <li class="swipeout deleted-callback">
+                                                                <div class="swipeout-content">
+                                                                        <div class="item-media">
+                                                                                <i class="icon icon-f7"></i>
+                                                                        </div>
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">Skere Maluma
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="swipeout-actions-right">
+                                                                        <a dni="42435643"
+                                                                                class="open-more-actions">Modificar</a>
+                                                                        <a dni="42435643"
+                                                                                data-confirm="Are you sure you want to delete this item?"
+                                                                                class="swipeout-delete">Eliminar</a>
+                                                                </div>
+                                                        </li>
+                                                        <li class="swipeout deleted-callback">
+                                                                <div class="swipeout-content">
+                                                                        <div class="item-media">
+                                                                                <i class="icon icon-f7"></i>
+                                                                        </div>
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">Con eso no se
+                                                                                        jode
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="swipeout-actions-right">
+                                                                        <a dni="con eso no se jodexd"
+                                                                                class="open-more-actions">Modificar
+                                                                        </a>
+                                                                        <a dni="con eso no se jodexd"
+                                                                                data-confirm="Are you sure you want to delete this item?"
+                                                                                class="swipeout-delete">Eliminar
+                                                                        </a>
+                                                                </div>
+                                                        </li>
+                                                </ul>
+                                        </div>
+                                </div>
+                                <!-- Second tab -->
+                                <div class="tab" id="materias">
+                                        <div class="tab tab-active" id="alumnos">
+                                                <div class="buscarAca list searchbar-found">
+                                                        <ul>
+                                                                <li class="item-content">
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">Matematicas
+                                                                                </div>
+                                                                        </div>
+                                                                </li>
+                                                                <li class="item-content">
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">Lengua</div>
+                                                                        </div>
+                                                                </li>
+                                                                <li class="item-content">
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">Musica</div>
+                                                                        </div>
+                                                                </li>
+                                                                <li class="item-content">
+                                                                        <div class="item-inner">
+                                                                                <div class="item-title">No se</div>
+                                                                        </div>
+                                                                </li>
+                                                        </ul>
+                                                </div>
+                                        </div>
+                                </div>
+                                <!-- Third tab -->
+                                <div class="tab" id="escuelas">
+                                </div>
+                        </div>
+                </div>
+                <div class="page-content tab" id="agregar">
+                        <!-- BUTTON 1 -->
+                        <div class="block">
+                                <div class="row">
+                                        <a href="/agregarAlumno/" class="col button button-outline">ALUMNO</a>
+                                </div>
+                        </div>
+                        <!-- BUTTON 2 -->
+                        <div class="block">
+                                <div class="row">
+                                        <a href="/agregarCurso/" class="col button button-outline">CURSO</a>
+                                </div>
+                        </div>
+                        <!-- BUTTON 3 -->
+                        <div class="block">
+                                <div class="row">
+                                        <a href="/agregarEscuela/" class="col button button-outline">ESCUELA</a>
+                                </div>
+                        </div>
+                        <!-- BUTTON 4 -->
+                        <div class="block">
+                                <div class="row">
+                                        <a href="/agregarMateria/" class="col button button-outline">MATERIA</a>
+                                </div>
+                        </div>
+                </div>
+                <div class="page-content tab" id="definir">
+                        <form id="formDefinir" class="list no-hairlines-md">
+                                <ul>
+                                        <li class="item-content item-input">
+                                                <div class="item-inner">
+                                                        <div class="item-input-wrap">
+                                                                <input name="dni" type="text"
+                                                                        placeholder="DNI">
+                                                        </div>
+                                                </div>
+                                        </li>
+                                                                                <li class="item-content item-input">
+                                                <div class="item-inner">
+                                                        <div class="item-input-wrap">
+                                                                <input name="escuela" type="text" readonly="readonly"
+                                                                        id="pickerDefinirEscuela" placeholder="Escuela">
+                                                        </div>
+                                                </div>
+                                        </li>
+                                                                                <li class="item-content item-input">
+                                                <div class="item-inner">
+                                                        <div class="item-input-wrap">
+                                                                <input name="curso" type="text" readonly="readonly"
+                                                                        id="pickerDefinirCurso" placeholder="Curso">
+                                                        </div>
+                                                </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                                <div class="item-inner">
+                                                        <div class="item-input-wrap">
+                                                                <input name="materia" type="text" readonly="readonly"
+                                                                        id="pickerDefinirMateria" placeholder="Materia">
+                                                        </div>
+                                                </div>
+                                        </li>
+                                        <li class="item-content item-input">
+                                                <div class="item-inner">
+                                                        <div class="item-input-wrap">
+                                                                <input id="notaDefinir" name="nota" type="text"
+                                                                        placeholder="Nota">
+                                                        </div>
+                                                </div>
+                                        </li>
+                                </ul>
+                        </form>
+                        <div class="block">
+                                <div class="row">
+                                        <button id="definirNota" class="col button button-outline">Definir</button>
+                                </div>
+                        </div>
+
+                </div>
+        </div>
