@@ -53,64 +53,8 @@
                                 <!-- First tab, active -->
                                 <div class="tab tab-active" id="alumnos">
                                         <div class="buscarAca list">
-                                                <ul>
-                                                        <li class="swipeout deleted-callback">
-                                                                <div class="swipeout-content">
-                                                                        <div class="item-media">
-                                                                                <i class="icon icon-f7"></i>
-                                                                        </div>
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">Carlos Mandela
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                                <div class="swipeout-actions-right">
-                                                                        <a dni="16516518"
-                                                                                class="open-more-actions">Modificar</a>
-                                                                        <a dni="16516518"
-                                                                                data-confirm="Are you sure you want to delete this item?"
-                                                                                class="swipeout-delete">Eliminar</a>
-                                                                </div>
-                                                        </li>
-                                                        <li class="swipeout deleted-callback">
-                                                                <div class="swipeout-content">
-                                                                        <div class="item-media">
-                                                                                <i class="icon icon-f7"></i>
-                                                                        </div>
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">Skere Maluma
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                                <div class="swipeout-actions-right">
-                                                                        <a dni="42435643"
-                                                                                class="open-more-actions">Modificar</a>
-                                                                        <a dni="42435643"
-                                                                                data-confirm="Are you sure you want to delete this item?"
-                                                                                class="swipeout-delete">Eliminar</a>
-                                                                </div>
-                                                        </li>
-                                                        <li class="swipeout deleted-callback">
-                                                                <div class="swipeout-content">
-                                                                        <div class="item-media">
-                                                                                <i class="icon icon-f7"></i>
-                                                                        </div>
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">Con eso no se
-                                                                                        jode
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                                <div class="swipeout-actions-right">
-                                                                        <a dni="con eso no se jodexd"
-                                                                                class="open-more-actions">Modificar
-                                                                        </a>
-                                                                        <a dni="con eso no se jodexd"
-                                                                                data-confirm="Are you sure you want to delete this item?"
-                                                                                class="swipeout-delete">Eliminar
-                                                                        </a>
-                                                                </div>
-                                                        </li>
+                                                <ul id="alumnosDB">
+                                                        <!-- Lista de alumnos -->
                                                 </ul>
                                         </div>
                                 </div>
@@ -118,34 +62,19 @@
                                 <div class="tab" id="materias">
                                         <div class="tab tab-active" id="alumnos">
                                                 <div class="buscarAca list searchbar-found">
-                                                        <ul>
-                                                                <li class="item-content">
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">Matematicas
-                                                                                </div>
-                                                                        </div>
-                                                                </li>
-                                                                <li class="item-content">
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">Lengua</div>
-                                                                        </div>
-                                                                </li>
-                                                                <li class="item-content">
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">Musica</div>
-                                                                        </div>
-                                                                </li>
-                                                                <li class="item-content">
-                                                                        <div class="item-inner">
-                                                                                <div class="item-title">No se</div>
-                                                                        </div>
-                                                                </li>
+                                                        <ul id="materiasDB">
+                                                                
                                                         </ul>
                                                 </div>
                                         </div>
                                 </div>
                                 <!-- Third tab -->
                                 <div class="tab" id="escuelas">
+                                        <div class="buscarAca list">
+                                                <ul id="escuelasDB">
+                                                        <!-- Lista de alumnos -->
+                                                </ul>
+                                        </div>
                                 </div>
                         </div>
                 </div>
@@ -181,12 +110,11 @@
                                         <li class="item-content item-input">
                                                 <div class="item-inner">
                                                         <div class="item-input-wrap">
-                                                                <input name="dni" type="text"
-                                                                        placeholder="DNI">
+                                                                <input name="dni" type="text" placeholder="DNI">
                                                         </div>
                                                 </div>
                                         </li>
-                                                                                <li class="item-content item-input">
+                                        <li class="item-content item-input">
                                                 <div class="item-inner">
                                                         <div class="item-input-wrap">
                                                                 <input name="escuela" type="text" readonly="readonly"
@@ -194,7 +122,7 @@
                                                         </div>
                                                 </div>
                                         </li>
-                                                                                <li class="item-content item-input">
+                                        <li class="item-content item-input">
                                                 <div class="item-inner">
                                                         <div class="item-input-wrap">
                                                                 <input name="curso" type="text" readonly="readonly"

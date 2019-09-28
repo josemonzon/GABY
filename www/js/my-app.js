@@ -367,12 +367,111 @@ $$(document).on('page:init', '.page[data-name="agregarMateria"]', async function
 
 
 $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
+  // Do something here when page with data-name="about" attribute loaded and initialized
+  console.log(e);
+  // Variables
   var dni;
   var pickerCursosDefinir = app.picker.create();
   var pickerMateriasDefinir = app.picker.create();
   var escuelasArrayDefinir = [];
   var cursosArrayDefinir = [];
   var materiasArrayDefinir = [];
+  // Llenar alumnos/materias/escuelas desde la base de datos
+  app.preloader.show();
+  // Llenar un array de escuelas
+  await db.collection(pro).doc(emailProfesor).collection(esc).get()
+    .then(function (querySnapshot) {
+      querySnapshot.forEach(function (doc) {
+        escuelasArrayDefinir.push(doc.id);
+        $$("#escuelasDB").append(
+          '<li class="swipeout deleted-callback">' +
+          '<div class="swipeout-content">' +
+          '<div class="item-media">' +
+          '<i class="icon icon-f7"></i>' +
+          '</div>' +
+          '<div class="item-inner">' +
+          '<div class="item-title">' + doc.id + ' </div>' +
+          '</div>' +
+          '</div>' +
+          '<div class="swipeout-actions-right">' +
+          '<a dni="' + doc.id + '" class="open-more-actions">Modificar</a>' +
+          '<a dni="' + doc.id + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
+          '</div>' +
+          '</li>'
+        );
+
+      })
+    })
+  // Llenar un array con las cursos
+  for (var i = 0; i < escuelasArrayDefinir.length; i++) {
+    await db.collection(pro).doc(emailProfesor).collection(esc).doc(escuelasArrayDefinir[i]).collection(cur).get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+          cursosArrayDefinir.push(doc.id);
+        })
+      })
+    // Llenar un array con los alumnos
+    for (var z = 0; z < cursosArrayDefinir.length; z++) {
+      // Imprime los alumnos
+      await db.collection(pro).doc(emailProfesor).collection(esc).doc(escuelasArrayDefinir[i]).collection(cur).doc(cursosArrayDefinir[z]).collection(alm).get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            $$("#alumnosDB").append(
+              '<li class="swipeout deleted-callback">' +
+              '<div class="swipeout-content">' +
+              '<div class="item-media">' +
+              '<i class="icon icon-f7"></i>' +
+              '</div>' +
+              '<div class="item-inner">' +
+              '<div class="item-title">' + doc.data().nombre + ' ' + doc.data().apellido + ' </div>' +
+              '</div>' +
+              '</div>' +
+              '<div class="swipeout-actions-right">' +
+              '<a dni="' + doc.id + '" class="open-more-actions">Modificar</a>' +
+              '<a dni="' + doc.id + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
+              '</div>' +
+              '</li>'
+            );
+          })
+        })
+      // Imprime las materias
+      await db.collection(pro).doc(emailProfesor).collection(esc).doc(escuelasArrayDefinir[i]).collection(cur).doc(cursosArrayDefinir[z]).collection(mat).get()
+        .then(function (querySnapshot) {
+          querySnapshot.forEach(function (doc) {
+            $$("#materiasDB").append(
+              '<li class="swipeout deleted-callback">' +
+              '<div class="swipeout-content">' +
+              '<div class="item-media">' +
+              '<i class="icon icon-f7"></i>' +
+              '</div>' +
+              '<div class="item-inner">' +
+              '<div class="item-title">' + doc.id + ' - ' + escuelasArrayDefinir[i] + ' - ' + cursosArrayDefinir[z] +' </div>' +
+              '</div>' +
+              '</div>' +
+              '<div class="swipeout-actions-right">' +
+              '<a dni="' + doc.id + '" class="open-more-actions">Modificar</a>' +
+              '<a dni="' + doc.id + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
+              '</div>' +
+              '</li>'
+            );
+          })
+        })
+    }
+  }
+  app.preloader.hide()
+
+
+  // Barra de busqueda
+  var searchbar = app.searchbar.create({
+    el: '.searchbar',
+    searchContainer: '.buscarAca',
+    searchIn: '.item-title',
+    on: {
+      search(sb, query, previousQuery) {
+      }
+    }
+  });
+  // Probar modificar y eliminar
   $$('.open-more-actions').on('click', function () {
     console.log($$(this).attr("dni"));
   });
@@ -385,18 +484,7 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
     app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
     dni = "";
   });
-  // Barra de busqueda
-  var searchbar = app.searchbar.create({
-    el: '.searchbar',
-    searchContainer: '.buscarAca',
-    searchIn: '.item-title',
-    on: {
-      search(sb, query, previousQuery) {
-      }
-    }
-  });
-  // Do something here when page with data-name="about" attribute loaded and initialized
-  console.log(e);
+  // Visibilidad y posicion del tabbar / placeholder del buscador
   // Cambia el placeholder dependiendo de en que pestaña este
   $$("#buscar .tab-link").on("click", function () {
     $$("#buscarCampo").attr("placeholder", "Buscar " + $$("#buscar .tab-link-active").attr("name"));
@@ -409,15 +497,15 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   $$(".mostrarNav").on("click", function () {
     $$("#searchBarBuscar").removeClass("toolbar-bottom-md");
   });
-  // Definir
-  //Query del picker
+  // Seccion Definir
+  // Query del picker
   await db.collection(pro).doc(emailProfesor).collection(esc).get()
     .then(function (querySnapshot) {
       querySnapshot.forEach(function (doc) {
         escuelasArrayDefinir.push(doc.id);
       })
     })
-  //Picker
+  // Picker
   var pickerEscuela = app.picker.create({
     inputEl: '#pickerDefinirEscuela',
     cols: [
@@ -487,8 +575,6 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
       }
     }
   });
-
-
   // Boton definir
   $$("#definirNota").on('click', function () {
     var formDefinir = app.form.convertToData('#formDefinir');
