@@ -1,5 +1,16 @@
 //variables globales
-var db;
+//Firebase configs
+var firebaseConfig = {
+  apiKey: "AIzaSyBj6BPosJF0D4v9bExt2kg7Frtv2TRJXrg",
+  authDomain: "gabylibrodecalificaciones.firebaseapp.com",
+  databaseURL: "https://gabylibrodecalificaciones.firebaseio.com",
+  projectId: "gabylibrodecalificaciones",
+  storageBucket: "gabylibrodecalificaciones.appspot.com",
+  messagingSenderId: "503297845087",
+  appId: "1:503297845087:web:4777ee0c80e8f32378f8ea"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
 var not = "Notas";
 var mat = "Materias";
 var alm = "Alumnos";
@@ -105,18 +116,6 @@ function crearUser() {
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function () {
   console.log("Device is ready!");
-  //Firebase configs
-  var firebaseConfig = {
-    apiKey: "AIzaSyBj6BPosJF0D4v9bExt2kg7Frtv2TRJXrg",
-    authDomain: "gabylibrodecalificaciones.firebaseapp.com",
-    databaseURL: "https://gabylibrodecalificaciones.firebaseio.com",
-    projectId: "gabylibrodecalificaciones",
-    storageBucket: "gabylibrodecalificaciones.appspot.com",
-    messagingSenderId: "503297845087",
-    appId: "1:503297845087:web:4777ee0c80e8f32378f8ea"
-  };
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
 });
 // Option 1. Using one 'page:init' handler for all pages
 $$(document).on('page:init', function (e) {
@@ -371,6 +370,8 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   console.log(e);
   // Variables
   var dni;
+  var curso;
+  var escuela;
   var pickerCursosDefinir = app.picker.create();
   var pickerMateriasDefinir = app.picker.create();
   var escuelasArrayDefinir = [];
@@ -427,8 +428,8 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
               '</div>' +
               '</div>' +
               '<div class="swipeout-actions-right">' +
-              '<a dni="' + doc.id + '" class="open-more-actions">Modificar</a>' +
-              '<a dni="' + doc.id + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
+              '<a curso="' + doc.data().curso + '" escuela="' + doc.data().escuela + '" dni="' + doc.id + '" class="open-more-actions">Modificar</a>' +
+              '<a curso="' + doc.data().curso + '" escuela="' + doc.data().escuela + '" dni="' + doc.id + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
               '</div>' +
               '</li>'
             );
@@ -445,7 +446,7 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
               '<i class="icon icon-f7"></i>' +
               '</div>' +
               '<div class="item-inner">' +
-              '<div class="item-title">' + doc.id + ' - ' + escuelasArrayDefinir[i] + ' - ' + cursosArrayDefinir[z] +' </div>' +
+              '<div class="item-title">' + doc.id + ' - ' + escuelasArrayDefinir[i] + ' - ' + cursosArrayDefinir[z] + ' </div>' +
               '</div>' +
               '</div>' +
               '<div class="swipeout-actions-right">' +
@@ -458,8 +459,7 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
         })
     }
   }
-  app.preloader.hide()
-
+  app.preloader.hide();
 
   // Barra de busqueda
   var searchbar = app.searchbar.create({
@@ -477,12 +477,24 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   });
   $$('.swipeout-delete').on('click', function () {
     dni = $$(this).attr("dni");
+    curso = $$(this).attr("curso");
+    escuela = $$(this).attr("escuela");
     console.log("lo asigna");
   });
   $$('.deleted-callback').on('swipeout:deleted', function () {
     console.log("lo borra");
+    console.log($$(this).attr("dni"));
+    // sacar de la base de datos
+    db.collection(pro).doc(emailProfesor).collection(esc).doc(escuela).collection(cur).doc(curso).collection(alm).doc(dni).delete().then(function () {
+      console.log("Se borro perrooo");
+    });
+    //
+
+
     app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
     dni = "";
+    curso = "";
+    escuela = "";
   });
   // Visibilidad y posicion del tabbar / placeholder del buscador
   // Cambia el placeholder dependiendo de en que pestaña este
