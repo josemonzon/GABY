@@ -284,6 +284,32 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
       .catch(function (error) {
         console.log("Error: " + error);
       });
+      //agregar al buscador?
+      $$("#alumnosDB").append(
+        '<li class="swipeout deleted-callback">' +
+        '<div class="swipeout-content">' +
+        '<div class="item-media">' +
+        '<i class="icon icon-f7"></i>' +
+        '</div>' +
+        '<div class="item-inner">' +
+        '<div class="item-title">' + formAgregarAlumno.nombre + ' ' + formAgregarAlumno.apellido + ' </div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="swipeout-actions-right">' +
+        '<a curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" class="open-more-actions">Modificar</a>' +
+        '<a curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
+        '</div>' +
+        '</li>'
+      );
+      $$('.swipeout-delete').on('click', function () {
+        dni = $$(this).attr("dni");
+        curso = $$(this).attr("curso");
+        escuela = $$(this).attr("escuela");
+        console.log("lo asigna");
+      });
+      $$('.open-more-actions').on('click', function () {
+        console.log($$(this).attr("dni"));
+      });
   });
 
 
@@ -377,8 +403,9 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   var escuelasArrayDefinir = [];
   var cursosArrayDefinir = [];
   var materiasArrayDefinir = [];
-  // Llenar alumnos/materias/escuelas desde la base de datos
+  // Carga todo
   app.preloader.show();
+  // Llenar alumnos/materias/escuelas desde la base de datos
   // Llenar un array de escuelas
   await db.collection(pro).doc(emailProfesor).collection(esc).get()
     .then(function (querySnapshot) {
@@ -489,7 +516,6 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
       console.log("Se borro perrooo");
     });
     //
-
 
     app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
     dni = "";
