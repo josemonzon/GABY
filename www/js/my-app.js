@@ -301,6 +301,9 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
         '</div>' +
         '</li>'
       );
+      $$('.swipeout-delete').off('click');
+      $$('.open-more-actions').off('click');
+      $$('.deleted-callback').off('swipeout:deleted');
       $$('.swipeout-delete').on('click', function () {
         dni = $$(this).attr("dni");
         curso = $$(this).attr("curso");
@@ -309,6 +312,19 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
       });
       $$('.open-more-actions').on('click', function () {
         console.log($$(this).attr("dni"));
+      });
+      $$('.deleted-callback').on('swipeout:deleted', function () {
+        console.log("lo borra");
+        console.log($$(this).attr("dni"));
+        // sacar de la base de datos
+        db.collection(pro).doc(emailProfesor).collection(esc).doc(escuela).collection(cur).doc(curso).collection(alm).doc(dni).delete().then(function () {
+          console.log("Se borro perrooo");
+        });
+        //
+        app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
+        dni = "";
+        curso = "";
+        escuela = "";
       });
   });
 
@@ -404,7 +420,8 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   var cursosArrayDefinir = [];
   var materiasArrayDefinir = [];
   // Carga todo
-  app.preloader.show();
+  //app.preloader.show();
+  app.dialog.progress('Cargando...',"pink");
   // Llenar alumnos/materias/escuelas desde la base de datos
   // Llenar un array de escuelas
   await db.collection(pro).doc(emailProfesor).collection(esc).get()
@@ -486,7 +503,7 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
         })
     }
   }
-  app.preloader.hide();
+  app.dialog.close();
 
   // Barra de busqueda
   var searchbar = app.searchbar.create({
