@@ -36,8 +36,7 @@ var app = new Framework7({
     swipe: 'left',
   },
   // Add default routes
-  routes: [
-    {
+  routes: [{
       path: '/iniciar/',
       url: 'iniciarsesion.html',
     },
@@ -65,6 +64,10 @@ var app = new Framework7({
       path: '/agregarMateria/',
       url: 'agregarMateria.html',
     },
+    {
+      path: '/verNotasAlumno/:escuela/:curso/:dni',
+      url: 'verNotasAlumno.html',
+    },
   ]
   // ... other parameters
 });
@@ -84,20 +87,22 @@ var mainView = app.views.create('.view-main');
 function crearToast(texto) {
   var toastBottom = app.toast.create({
     text: texto,
-    closeTimeout: 2000,
+    closeTimeout: 3500,
   });
   toastBottom.open();
 }
 
 function crearUser() {
+  app.dialog.progress('Creando usuario...', "pink");
   var email = $$("#nombreRegistro").val();
   var password = $$("#contrasenaRegistro").val().toString();
   console.log("contraseña " + password);
   console.log("email " + email);
   firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function (user) {
+      app.dialog.close();
       console.log(user);
-      app.dialog.alert("Se creo el usuario");
+      crearToast("Se creo el usuario con el email " + email);
       mainView.router.navigate("/iniciar/");
     })
     .catch(function (error) {
@@ -152,6 +157,7 @@ $$(document).on('page:init', '.page[data-name="iniciarsesion"]', function (e) {
   });
 })
 
+
 $$(document).on('page:init', '.page[data-name="agregarEscuela"]', function (e) {
   // Do something here when page with data-name="about" attribute loaded and initialized
   console.log(e);
@@ -160,8 +166,8 @@ $$(document).on('page:init', '.page[data-name="agregarEscuela"]', function (e) {
   $$("#agregarEscuela").on('click', function () {
     var formAgregarEscuela = app.form.convertToData('#formAgregarEscuela');
     db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarEscuela.nombre).set({
-      direccion: formAgregarEscuela.direccion,
-    })
+        direccion: formAgregarEscuela.direccion,
+      })
       .then(function (docRef) {
         console.log("ok");
       })
@@ -169,6 +175,14 @@ $$(document).on('page:init', '.page[data-name="agregarEscuela"]', function (e) {
         console.log("Error: " + error);
       });
   });
+})
+$$(document).on('page:init', '.page[data-name="verNotasAlumno"]', async function (e) {
+  // Do something here when page with data-name="about" attribute loaded and initialized
+  console.log(e);
+  var datosRecibidos = app.view.main.router.currentRoute.params;
+  console.log(datosRecibidos.escuela);
+  console.log(datosRecibidos.dni);
+  console.log(datosRecibidos.curso);
 })
 
 
@@ -188,17 +202,14 @@ $$(document).on('page:init', '.page[data-name="agregarCurso"]', function (e) {
   //Picker Escuelas
   pickerEscuelaAgregarCurso = app.picker.create({
     inputEl: '#pickerEscuelas',
-    cols: [
-      {
-        textAlign: 'center',
-        values: escuelasArray
-      }
-    ],
+    cols: [{
+      textAlign: 'center',
+      values: escuelasArray
+    }],
   });
   $$("#agregarCurso").on('click', function () {
     var formAgregarCurso = app.form.convertToData('#formAgregarCurso');
-    db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarCurso.escuela).collection(cur).doc(formAgregarCurso.nombre).set({
-    })
+    db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarCurso.escuela).collection(cur).doc(formAgregarCurso.nombre).set({})
       .then(function (docRef) {
         console.log("ok");
       })
@@ -232,12 +243,10 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
   //Picker
   var pickerEscuela = app.picker.create({
     inputEl: '#demo-picker-device',
-    cols: [
-      {
-        textAlign: 'center',
-        values: escuelasArray,
-      }
-    ],
+    cols: [{
+      textAlign: 'center',
+      values: escuelasArray,
+    }],
     on: {
       closed: async function () {
         var formAgregarAlumno = app.form.convertToData('#formAgregarAlumno');
@@ -253,12 +262,10 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
           pickerCursos = app.picker.create({
             updateValuesOnMomentum: true,
             inputEl: '#pickerCurso',
-            cols: [
-              {
-                textAlign: 'center',
-                values: cursosArray,
-              }
-            ],
+            cols: [{
+              textAlign: 'center',
+              values: cursosArray,
+            }],
           });
         }
       },
@@ -272,60 +279,60 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
   $$("#agregarAlumno").on("click", function () {
     var formAgregarAlumno = app.form.convertToData('#formAgregarAlumno');
     db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarAlumno.escuela).collection(cur).doc(formAgregarAlumno.curso).collection(alm).doc(formAgregarAlumno.dni).set({
-      nombre: formAgregarAlumno.nombre,
-      apellido: formAgregarAlumno.apellido,
-      escuela: formAgregarAlumno.escuela,
-      curso: formAgregarAlumno.curso,
-      nacimiento: formAgregarAlumno.fecha,
-    })
+        nombre: formAgregarAlumno.nombre,
+        apellido: formAgregarAlumno.apellido,
+        escuela: formAgregarAlumno.escuela,
+        curso: formAgregarAlumno.curso,
+        nacimiento: formAgregarAlumno.fecha,
+      })
       .then(function (docRef) {
         console.log("ok");
       })
       .catch(function (error) {
         console.log("Error: " + error);
       });
-      //agregar al buscador?
-      $$("#alumnosDB").append(
-        '<li class="swipeout deleted-callback">' +
-        '<div class="swipeout-content">' +
-        '<div class="item-media">' +
-        '<i class="icon icon-f7"></i>' +
-        '</div>' +
-        '<div class="item-inner">' +
-        '<div class="item-title">' + formAgregarAlumno.nombre + ' ' + formAgregarAlumno.apellido + ' </div>' +
-        '</div>' +
-        '</div>' +
-        '<div class="swipeout-actions-right">' +
-        '<a curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" class="open-more-actions">Modificar</a>' +
-        '<a curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
-        '</div>' +
-        '</li>'
-      );
-      $$('.swipeout-delete').off('click');
-      $$('.open-more-actions').off('click');
-      $$('.deleted-callback').off('swipeout:deleted');
-      $$('.swipeout-delete').on('click', function () {
-        dni = $$(this).attr("dni");
-        curso = $$(this).attr("curso");
-        escuela = $$(this).attr("escuela");
-        console.log("lo asigna");
+    //agregar al buscador?
+    $$("#alumnosDB").append(
+      '<li class="swipeout deleted-callback">' +
+      '<div class="swipeout-content">' +
+      '<div class="item-media">' +
+      '<i class="icon icon-f7"></i>' +
+      '</div>' +
+      '<div class="item-inner">' +
+      '<div class="item-title">' + formAgregarAlumno.nombre + ' ' + formAgregarAlumno.apellido + ' </div>' +
+      '</div>' +
+      '</div>' +
+      '<div class="swipeout-actions-right">' +
+      '<a curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" class="open-more-actions">Modificar</a>' +
+      '<a curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" data-confirm="¿Estas seguro que queres eliminar a este alumno?" class="swipeout-delete">Eliminar</a>' +
+      '</div>' +
+      '</li>'
+    );
+    $$('.swipeout-delete').off('click');
+    $$('.open-more-actions').off('click');
+    $$('.deleted-callback').off('swipeout:deleted');
+    $$('.swipeout-delete').on('click', function () {
+      dni = $$(this).attr("dni");
+      curso = $$(this).attr("curso");
+      escuela = $$(this).attr("escuela");
+      console.log("lo asigna");
+    });
+    $$('.open-more-actions').on('click', function () {
+      console.log($$(this).attr("dni"));
+    });
+    $$('.deleted-callback').on('swipeout:deleted', function () {
+      console.log("lo borra");
+      console.log($$(this).attr("dni"));
+      // sacar de la base de datos
+      db.collection(pro).doc(emailProfesor).collection(esc).doc(escuela).collection(cur).doc(curso).collection(alm).doc(dni).delete().then(function () {
+        console.log("Se borro perrooo");
       });
-      $$('.open-more-actions').on('click', function () {
-        console.log($$(this).attr("dni"));
-      });
-      $$('.deleted-callback').on('swipeout:deleted', function () {
-        console.log("lo borra");
-        console.log($$(this).attr("dni"));
-        // sacar de la base de datos
-        db.collection(pro).doc(emailProfesor).collection(esc).doc(escuela).collection(cur).doc(curso).collection(alm).doc(dni).delete().then(function () {
-          console.log("Se borro perrooo");
-        });
-        //
-        app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
-        dni = "";
-        curso = "";
-        escuela = "";
-      });
+      //
+      app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
+      dni = "";
+      curso = "";
+      escuela = "";
+    });
   });
 
 
@@ -354,12 +361,10 @@ $$(document).on('page:init', '.page[data-name="agregarMateria"]', async function
   //Picker
   var pickerEscuelaMateria = app.picker.create({
     inputEl: '#pickerEscuelaMateria',
-    cols: [
-      {
-        textAlign: 'center',
-        values: escuelasArray,
-      }
-    ],
+    cols: [{
+      textAlign: 'center',
+      values: escuelasArray,
+    }],
     on: {
       closed: async function () {
         var formAgregarMateria = app.form.convertToData('#formAgregarMateria');
@@ -374,12 +379,10 @@ $$(document).on('page:init', '.page[data-name="agregarMateria"]', async function
           pickerCursosMateria = app.picker.create({
             updateValuesOnMomentum: true,
             inputEl: '#pickerCursoMateria',
-            cols: [
-              {
-                textAlign: 'center',
-                values: cursosArray,
-              }
-            ],
+            cols: [{
+              textAlign: 'center',
+              values: cursosArray,
+            }],
           });
         }
       },
@@ -394,8 +397,7 @@ $$(document).on('page:init', '.page[data-name="agregarMateria"]', async function
   // Agregar materia
   $$("#agregarMateria").on("click", function () {
     var formAgregarMateria = app.form.convertToData('#formAgregarMateria');
-    db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarMateria.escuela).collection(cur).doc(formAgregarMateria.curso).collection(mat).doc(formAgregarMateria.nombre).set({
-    })
+    db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarMateria.escuela).collection(cur).doc(formAgregarMateria.curso).collection(mat).doc(formAgregarMateria.nombre).set({})
       .then(function (docRef) {
         console.log("ok");
       })
@@ -421,7 +423,7 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   var materiasArrayDefinir = [];
   // Carga todo
   //app.preloader.show();
-  app.dialog.progress('Cargando...',"pink");
+  app.dialog.progress('Cargando...', "pink");
   // Llenar alumnos/materias/escuelas desde la base de datos
   // Llenar un array de escuelas
   await db.collection(pro).doc(emailProfesor).collection(esc).get()
@@ -463,7 +465,7 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
           querySnapshot.forEach(function (doc) {
             $$("#alumnosDB").append(
               '<li class="swipeout deleted-callback">' +
-              '<div class="swipeout-content">' +
+              '<div curso="' + doc.data().curso + '" escuela="' + doc.data().escuela + '" dni="' + doc.id + '" class="irANotas swipeout-content">' +
               '<div class="item-media">' +
               '<i class="icon icon-f7"></i>' +
               '</div>' +
@@ -511,13 +513,13 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
     searchContainer: '.buscarAca',
     searchIn: '.item-title',
     on: {
-      search(sb, query, previousQuery) {
-      }
+      search(sb, query, previousQuery) {}
     }
   });
   // Probar modificar y eliminar
   $$('.open-more-actions').on('click', function () {
     console.log($$(this).attr("dni"));
+    mainView.router.navigate("/agregarAlumno/");
   });
   $$('.swipeout-delete').on('click', function () {
     dni = $$(this).attr("dni");
@@ -532,13 +534,20 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
     db.collection(pro).doc(emailProfesor).collection(esc).doc(escuela).collection(cur).doc(curso).collection(alm).doc(dni).delete().then(function () {
       console.log("Se borro perrooo");
     });
-    //
-
     app.dialog.alert('Se ha eliminado el alumno con el dni: ' + dni);
     dni = "";
     curso = "";
     escuela = "";
   });
+  // Ir a notas
+  $$(".irANotas").on('click', function () {
+    var cursoNotas = $$(this).attr("curso");
+    var dniNotas = $$(this).attr("dni");
+    var escuelaNotas = $$(this).attr("escuela");
+    mainView.router.navigate("/verNotasAlumno/" + escuelaNotas + "/" + cursoNotas + "/" + dniNotas);
+  });
+
+
   // Visibilidad y posicion del tabbar / placeholder del buscador
   // Cambia el placeholder dependiendo de en que pestaña este
   $$("#buscar .tab-link").on("click", function () {
@@ -563,12 +572,10 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   // Picker
   var pickerEscuela = app.picker.create({
     inputEl: '#pickerDefinirEscuela',
-    cols: [
-      {
-        textAlign: 'center',
-        values: escuelasArrayDefinir,
-      }
-    ],
+    cols: [{
+      textAlign: 'center',
+      values: escuelasArrayDefinir,
+    }],
     on: {
       closed: async function () {
         var formDefinir = app.form.convertToData('#formDefinir');
@@ -584,12 +591,10 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
           pickerCursosDefinir = app.picker.create({
             updateValuesOnMomentum: true,
             inputEl: '#pickerDefinirCurso',
-            cols: [
-              {
-                textAlign: 'center',
-                values: cursosArrayDefinir,
-              }
-            ],
+            cols: [{
+              textAlign: 'center',
+              values: cursosArrayDefinir,
+            }],
             on: {
               closed: async function () {
                 var formDefinir = app.form.convertToData('#formDefinir');
@@ -604,12 +609,10 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
                 if (pickerMateriasDefinir.destroyed) {
                   pickerMateriasDefinir = app.picker.create({
                     inputEl: '#pickerDefinirMateria',
-                    cols: [
-                      {
-                        textAlign: 'center',
-                        values: materiasArrayDefinir,
-                      }
-                    ]
+                    cols: [{
+                      textAlign: 'center',
+                      values: materiasArrayDefinir,
+                    }]
                   });
                 }
 
@@ -634,9 +637,11 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
   $$("#definirNota").on('click', function () {
     var formDefinir = app.form.convertToData('#formDefinir');
     db.collection(pro).doc(emailProfesor).collection(esc).doc(formDefinir.escuela).collection(cur).doc(formDefinir.curso).collection(mat).doc(formDefinir.materia).collection(not).add({
-      dni: formDefinir.dni,
-      nota: formDefinir.nota,
-    })
+        dni: formDefinir.dni,
+        fecha: formDefinir.fecha,
+        observaciones: formDefinir.observaciones,
+        nota: formDefinir.nota,
+      })
       .then(function (docRef) {
         console.log("ok");
       })
@@ -644,7 +649,10 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
         console.log("Error: " + error);
       });
   })
-
+  // Calendario nota
+  var calendarDefault = app.calendar.create({
+    inputEl: '#fechaDeLaNota',
+  });
 
 
 

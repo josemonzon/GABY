@@ -42,7 +42,7 @@ text-align: center;
   -webkit-align-items: center;
   align-items: center;
 }
-body, input {
+body, input, textarea {
   color: white!important;
 }
 .calendar-day-today > .calendar-day-number {
@@ -63,4 +63,7 @@ body, input {
 }
 .item-title {
   color:white!important;
+}
+.colorNegro {
+  color:black!important;
 }
