@@ -180,9 +180,80 @@ $$(document).on('page:init', '.page[data-name="verNotasAlumno"]', async function
   // Do something here when page with data-name="about" attribute loaded and initialized
   console.log(e);
   var datosRecibidos = app.view.main.router.currentRoute.params;
-  console.log(datosRecibidos.escuela);
+  await db.collection(pro).doc(emailProfesor).collection(esc).doc(datosRecibidos.escuela).collection(cur).doc(datosRecibidos.curso).collection(mat).get()
+    .then(function (querySnapshot) {
+      var notasTotal = 0;
+      var cantidad = 0;
+      querySnapshot.forEach(async function (docMateria) {
+        console.log(docMateria.id);
+        $$(".verNotasAlumno").append(
+          '<div class="data-table">' +
+          '<div class="card data-table data-table-collapsible data-table-init">' +
+          '<div class="card-header">' +
+          '<div class="data-table-title colorNegro">' + docMateria.id + '</div>' +
+          '<div class="data-table-actions">' +
+          '</div>' +
+          '</div>' +
+          '<div class="card-content">' +
+          '<div class="list accordion-list">' +
+          '<ul>' +
+          '<li class="accordion-item"><a href="#" class="item-content item-link">' +
+          '<div class="item-inner">' +
+          '<div class="item-title colorNegro">Notas</div>' +
+          '</div>' +
+          '</a>' +
+          '<div class="accordion-item-content">' +
+          '<div class="block">' +
+          '<div class="data-table">' +
+          '<table>' +
+          '<tbody class="inNotasAca'+ docMateria.id +'">' +
+
+
+          '</tbody>' +
+          '</table>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</li>' +
+          '</ul>' +
+          '</div>' +
+          '<div class="list simple-list">' +
+          '<ul>' +
+          '<li class="colorNegro promedio' + docMateria.id + '">Promedio: -</li>' +
+          '</ul>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>');
+
+
+
+
+
+
+
+        // Ve las notas de cada materia
+        await db.collection(pro).doc(emailProfesor).collection(esc).doc(datosRecibidos.escuela).collection(cur).doc(datosRecibidos.curso).collection(mat).doc(docMateria.id).collection(not).where("dni", "==", datosRecibidos.dni.toString()).get()
+          .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+              notasTotal += parseInt(doc.data().nota);
+              cantidad++;
+              console.log(doc.data().nota);
+              console.log(docMateria.id);
+              $$(".inNotasAca" + docMateria.id).append(
+                $$(`<tr>
+                <td class="label-cell colorNegro" data-collapsible-title="Fecha">` + doc.data().fecha + `</td>
+                <td class="numeric-cell colorNegro" data-collapsible-title="Nota">` + doc.data().nota + `</td>
+                </tr>`)
+              );
+            })
+          })
+          var promedio = notasTotal/cantidad;
+          $$(".promedio" + docMateria.id).html("Promedio: " + promedio);
+
+      })
+    })
   console.log(datosRecibidos.dni);
-  console.log(datosRecibidos.curso);
 })
 
 
