@@ -68,6 +68,14 @@ var app = new Framework7({
       path: '/verNotasAlumno/:escuela/:curso/:dni',
       url: 'verNotasAlumno.html',
     },
+    {
+      path: '/prueba/',
+      url: 'prueba.html',
+    },
+    {
+      path: '/agregarNotaEspecial/:dni/:escuela/:curso/:materia',
+      url: 'agregarNotaEspecial.html',
+    }, 
   ]
   // ... other parameters
 });
@@ -156,6 +164,30 @@ $$(document).on('page:init', '.page[data-name="iniciarsesion"]', function (e) {
       });
   });
 })
+$$(document).on('page:init', '.page[data-name="agregarNotaEspecial"]', function (e) {
+  // Do something here when page with data-name="about" attribute loaded and initialized
+  console.log(e);
+  var calendarioNotaEspecial = app.calendar.create({
+    inputEl: '#fechaDeLaNotaEspecial',
+  });
+  var datosRecibidosNotaEspecial = app.view.main.router.currentRoute.params;
+  console.log(datosRecibidosNotaEspecial.materia);
+  $$("#agregarNotaEspecial").on('click', function () {
+    var formAgregarNotaEspecial = app.form.convertToData('#formAgregarNotaEspecial');
+    db.collection(pro).doc(emailProfesor).collection(esc).doc(datosRecibidosNotaEspecial.escuela).collection(cur).doc(datosRecibidosNotaEspecial.curso).collection(mat).doc(datosRecibidosNotaEspecial.materia).collection(not).add({
+      dni: datosRecibidosNotaEspecial.dni,
+      fecha: formAgregarNotaEspecial.fecha,
+      nota: formAgregarNotaEspecial.nota,
+    })
+    .then(function (docRef) {
+      console.log("ok");
+    })
+    .catch(function (error) {
+      console.log("Error: " + error);
+    });
+    mainView.router.back("/verNotasAlumno/" + datosRecibidosNotaEspecial.escuela + "/" + datosRecibidosNotaEspecial.curso + "/" + datosRecibidosNotaEspecial.dni, {ignoreCache: true, force: true});
+  });
+})
 
 
 $$(document).on('page:init', '.page[data-name="agregarEscuela"]', function (e) {
@@ -221,6 +253,7 @@ $$(document).on('page:init', '.page[data-name="verNotasAlumno"]', async function
           '<ul>' +
           '<li class="colorNegro promedio' + docMateria.id + '">Promedio: -</li>' +
           '</ul>' +
+          '<button dni="'+ datosRecibidos.dni +'" curso="'+ datosRecibidos.curso +'" escuela="'+ datosRecibidos.escuela +'" materia="'+ docMateria.id +'" class="definirNotaEnLista color-black col button">Agregar nota</button>' +
           '</div>' +
           '</div>' +
           '</div>' +
@@ -250,10 +283,16 @@ $$(document).on('page:init', '.page[data-name="verNotasAlumno"]', async function
           })
           var promedio = notasTotal/cantidad;
           $$(".promedio" + docMateria.id).html("Promedio: " + promedio);
-
+          notasTotal = 0;
+          cantidad = 0;
       })
     })
+  // OnClick notas
   console.log(datosRecibidos.dni);
+  $$(".definirNotaEnLista").on('click', function () {
+    console.log();
+    mainView.router.navigate("/agregarNotaEspecial/"+ $$(this).attr("dni") +"/"+ $$(this).attr("escuela") +"/"+ $$(this).attr("curso") +"/"+ $$(this).attr("materia"));
+  });
 })
 
 
