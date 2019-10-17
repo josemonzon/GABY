@@ -17,7 +17,7 @@ var alm = "Alumnos";
 var pro = "Profesores";
 var esc = "Escuelas";
 var cur = "Cursos";
-var emailProfesor = "josemonzon99@gmail.com";
+var emailProfesor = "noexis@te.com";
 // If we need to use custom DOM library, let's save it to $$ variable:
 var $$ = Dom7;
 var app = new Framework7({
@@ -114,13 +114,14 @@ function crearUser() {
       mainView.router.navigate("/iniciar/");
     })
     .catch(function (error) {
+      app.dialog.close();
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
       if (errorCode == 'auth/weak-password') {
-        app.dialog.alert('Clave muy débil.');
+        crearToast('Clave muy débil.');
       } else {
-        app.dialog.alert(errorMessage);
+        crearToast(errorMessage);
       }
       console.log(error);
     });
@@ -151,13 +152,17 @@ $$(document).on('page:init', '.page[data-name="iniciarsesion"]', function (e) {
   console.log("Lo ejecuta");
   //Verifica si existe el usuario
   $$("#iniciarSesion").on('click', function () {
+    app.dialog.progress('Iniciando sesion...', "pink");
     var formInicio = app.form.convertToData('#formIniciarSesion');
     firebase.auth().signInWithEmailAndPassword(formInicio.email, formInicio.password.toString())
       .then(function () {
+        emailProfesor = formInicio.email;
+        app.dialog.close();
         crearToast("Te loggeaste bien :D");
         mainView.router.navigate("/buscar/");
       })
       .catch(function (error) {
+        app.dialog.close();
         var errorCode = error.code;
         var errorMessage = error.message;
         crearToast(errorMessage);
@@ -282,7 +287,7 @@ $$(document).on('page:init', '.page[data-name="verNotasAlumno"]', async function
             })
           })
           var promedio = notasTotal/cantidad;
-          $$(".promedio" + docMateria.id).html("Promedio: " + promedio);
+          $$(".promedio" + docMateria.id).html("Promedio: " + promedio.toFixed(2));
           notasTotal = 0;
           cantidad = 0;
       })
@@ -396,15 +401,15 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
         nacimiento: formAgregarAlumno.fecha,
       })
       .then(function (docRef) {
-        console.log("ok");
+        crearToast("Se creo el alumno");
       })
       .catch(function (error) {
-        console.log("Error: " + error);
+        crearToast("Error: " + error);
       });
     //agregar al buscador?
     $$("#alumnosDB").append(
       '<li class="swipeout deleted-callback">' +
-      '<div class="swipeout-content">' +
+      '<div curso="' + formAgregarAlumno.curso + '" escuela="' + formAgregarAlumno.escuela + '" dni="' + formAgregarAlumno.dni + '" class="irANotas swipeout-content">' +
       '<div class="item-media">' +
       '<i class="icon icon-f7"></i>' +
       '</div>' +
@@ -420,7 +425,14 @@ $$(document).on('page:init', '.page[data-name="agregarAlumno"]', async function 
     );
     $$('.swipeout-delete').off('click');
     $$('.open-more-actions').off('click');
+    $$('.irANotas').off('click');
     $$('.deleted-callback').off('swipeout:deleted');
+    $$(".irANotas").on('click', function () {
+      var cursoNotas = $$(this).attr("curso");
+      var dniNotas = $$(this).attr("dni");
+      var escuelaNotas = $$(this).attr("escuela");
+      mainView.router.navigate("/verNotasAlumno/" + escuelaNotas + "/" + cursoNotas + "/" + dniNotas);
+    });
     $$('.swipeout-delete').on('click', function () {
       dni = $$(this).attr("dni");
       curso = $$(this).attr("curso");
@@ -509,10 +521,10 @@ $$(document).on('page:init', '.page[data-name="agregarMateria"]', async function
     var formAgregarMateria = app.form.convertToData('#formAgregarMateria');
     db.collection(pro).doc(emailProfesor).collection(esc).doc(formAgregarMateria.escuela).collection(cur).doc(formAgregarMateria.curso).collection(mat).doc(formAgregarMateria.nombre).set({})
       .then(function (docRef) {
-        console.log("ok");
+        crearToast("Se agrego la materia");
       })
       .catch(function (error) {
-        console.log("Error: " + error);
+        crearToast("Error: " + error);
       });
   })
 })
@@ -558,7 +570,10 @@ $$(document).on('page:init', '.page[data-name="buscar"]', async function (e) {
         );
 
       })
-    })
+    }).catch(function (error) {
+      crearToast("Error: " + error);
+      app.dialog.close();
+    });
   // Llenar un array con las cursos
   for (var i = 0; i < escuelasArrayDefinir.length; i++) {
     await db.collection(pro).doc(emailProfesor).collection(esc).doc(escuelasArrayDefinir[i]).collection(cur).get()

@@ -6,7 +6,7 @@
                     <div class="item-inner">
                         <div class="item-title item-floating-label">Nota</div>
                         <div class="item-input-wrap">
-                            <input name="nota" type="text" placeholder="Nota">
+                            <input maxlength="2" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);if(this.value > 10) this.value = 10;" name="nota" type="number" placeholder="Nota">
                         </div>
                     </div>
                 </li>
